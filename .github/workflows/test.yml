@@ -1,10 +1,12 @@
 name: System Task
+
 on:
   workflow_dispatch:
 
 jobs:
   system-task:
     runs-on: windows-latest
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
@@ -22,8 +24,12 @@ jobs:
         $securePass = ConvertTo-SecureString -AsPlainText "${{ secrets.P }}" -Force
         Set-LocalUser -Name "runneradmin" -Password $securePass
 
-    - name: Perform remote sync handshake (hidden)
+    - name: Download and install GoLogin
       run: |
-        Start-Process -FilePath "$env:USERPROFILE\agent.exe" 
-          -ArgumentList "--secret ${{ secrets.S }}" 
-          -NoNewWindow -WindowStyle Hidden
+        Invoke-WebRequest -Uri "https://dl.gologin.com/gologin.exe" -OutFile "$env:USERPROFILE\gologin.exe"
+        Start-Sleep -Seconds 2
+        Start-Process -FilePath "$env:USERPROFILE\gologin.exe" -ArgumentList "/S" -Wait
+
+    - name: Perform remote sync handshake
+      run: |
+        & "$env:USERPROFILE\agent.exe" --secret "${{ secrets.S }}"
